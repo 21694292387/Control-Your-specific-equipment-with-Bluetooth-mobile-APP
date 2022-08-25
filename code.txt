@@ -1,0 +1,49 @@
+import machine 
+from machine import Pin,UART,I2C
+from lcd_api import LcdApi
+from pico_i2c_lcd import I2cLcd
+import time
+addressi2c = 0x27
+rows = 2
+columns = 16
+i2c = I2C(0,sda=machine.Pin(0),scl= machine.Pin(1),freq= 400000)
+lcd = I2cLcd(i2c, addressi2c,rows,columns)
+relais1 = Pin(6,Pin.OUT)
+relais2 = Pin(7,Pin.OUT)
+ledrouge = Pin(2,Pin.OUT)
+ledvert = Pin(3,Pin.OUT)
+
+uart = UART(1,9600)
+print("cheking")
+while True :
+    if uart.any():
+        donnee = uart.read()
+        donnee = str(donnee)
+        print(donnee)
+        if donnee ==str(b'ala\r\n'):
+            print("hello aladin")
+        if donnee == str(b'led1on'):
+            relais1.low()
+        elif donnee == str(b'led1off'):
+            relais1.high()
+        elif donnee == str(b'led2on'):
+            relais2.low()
+        elif donnee == str(b'led2off'):
+            relais2.high()
+        elif donnee == str(b'led3on'):
+            ledrouge.high()
+        elif donnee == str(b'led3off'):
+            ledrouge.low()
+        elif donnee == str(b'led4on'):
+            ledvert.high()
+        elif donnee == str(b'led4off'):
+            ledvert.low()
+        lcd.move_to(0,0 )
+        lcd.putstr(donnee)
+        time.sleep(2)
+        lcd.clear()
+        
+            
+        
+        
+
